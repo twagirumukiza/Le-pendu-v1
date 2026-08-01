@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Le Pendu</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="app">
+
+  <div class="title-block">
+    <h1>LE PENDU</h1>
+    <div class="subtitle">Solo & Multijoueur</div>
+  </div>
+
+  <!-- ============ MENU ============ -->
+  <section id="screen-menu" class="screen active">
+    <div class="menu-cards">
+      <div class="card" data-goto="screen-solo-setup">
+        <h2>🧍 Solo</h2>
+        <p>Choisis un thème et une difficulté, devine le mot avant que le pendu soit complet.</p>
+      </div>
+      <div class="card" data-goto="screen-multi-menu">
+        <h2>👥 Multijoueur</h2>
+        <p>Crée un salon ou rejoins tes camarades avec un code.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOLO SETUP ============ -->
+  <section id="screen-solo-setup" class="screen">
+    <span class="back-link" data-goto="screen-menu">← Retour</span>
+    <h2>Nouvelle partie solo</h2>
+    <div class="field">
+      <label>Thème</label>
+      <select id="solo-theme"></select>
+    </div>
+    <div class="field">
+      <label>Difficulté</label>
+      <select id="solo-difficulte">
+        <option value="Tous">Toutes</option>
+        <option value="facile">Facile</option>
+        <option value="moyen">Moyen</option>
+        <option value="difficile">Difficile</option>
+      </select>
+    </div>
+    <button class="primary" id="solo-start-btn">Commencer</button>
+  </section>
+
+  <!-- ============ SOLO GAME ============ -->
+  <section id="screen-solo-game" class="screen">
+    <span class="back-link" data-goto="screen-menu">← Quitter la partie</span>
+    <div id="solo-status-banner"></div>
+    <div class="game-layout">
+      <div>
+        <div id="solo-gallows"></div>
+      </div>
+      <div class="panel">
+        <div class="meta-row">
+          <span id="solo-theme-label"></span>
+          <span id="solo-errors-label"></span>
+        </div>
+        <div class="word-display" id="solo-word-display"></div>
+        <div class="keyboard" id="solo-keyboard"></div>
+        <div class="word-guess-row">
+          <input type="text" id="solo-word-guess-input" placeholder="Tenter le mot entier..." />
+          <button id="solo-word-guess-btn">Deviner</button>
+        </div>
+        <button class="ghost" id="solo-replay-btn" style="margin-top:14px; display:none;">🔁 Rejouer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MULTI MENU ============ -->
+  <section id="screen-multi-menu" class="screen">
+    <span class="back-link" data-goto="screen-menu">← Retour</span>
+    <div id="multi-not-configured" class="notice hidden">
+      ⚠️ Firebase n'est pas encore configuré (voir <code>js/firebase-init.js</code>). Le mode multijoueur ne fonctionnera qu'une fois la config renseignée.
+    </div>
+    <div class="menu-cards">
+      <div class="card" data-goto="screen-multi-create">
+        <h2>➕ Créer un salon</h2>
+        <p>Choisis un mode de jeu et invite tes camarades avec un code.</p>
+      </div>
+      <div class="card" data-goto="screen-multi-join">
+        <h2>🔑 Rejoindre un salon</h2>
+        <p>Entre le code donné par l'hôte pour rejoindre la partie.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MULTI CREATE ============ -->
+  <section id="screen-multi-create" class="screen">
+    <span class="back-link" data-goto="screen-multi-menu">← Retour</span>
+    <h2>Créer un salon</h2>
+
+    <div class="field">
+      <label>Ton nom</label>
+      <input type="text" id="create-name" placeholder="Ex: Inno" />
+    </div>
+
+    <div class="field">
+      <label>Mode de jeu</label>
+      <select id="create-mode">
+        <option value="A">Manche collective — tour par tour, buzz possible à tout moment</option>
+        <option value="B">Mot secret — je choisis le mot, mes camarades devinent</option>
+      </select>
+    </div>
+
+    <div id="create-mode-a-options">
+      <div class="field">
+        <label>Thème</label>
+        <select id="create-theme"></select>
+      </div>
+      <div class="field">
+        <label>Difficulté</label>
+        <select id="create-difficulte">
+          <option value="Tous">Toutes</option>
+          <option value="facile">Facile</option>
+          <option value="moyen">Moyen</option>
+          <option value="difficile">Difficile</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="create-mode-b-options" class="hidden">
+      <div class="field">
+        <label>Ton mot secret</label>
+        <input type="text" id="create-secret-word" placeholder="Ex: BAGUETTE" />
+      </div>
+    </div>
+
+    <button class="primary" id="create-room-btn">Créer le salon</button>
+  </section>
+
+  <!-- ============ MULTI JOIN ============ -->
+  <section id="screen-multi-join" class="screen">
+    <span class="back-link" data-goto="screen-multi-menu">← Retour</span>
+    <h2>Rejoindre un salon</h2>
+    <div class="field">
+      <label>Ton nom</label>
+      <input type="text" id="join-name" placeholder="Ex: Camarade" />
+    </div>
+    <div class="field">
+      <label>Code du salon</label>
+      <input type="text" id="join-code" placeholder="Ex: 7QX2M" style="text-transform:uppercase" />
+    </div>
+    <button class="primary" id="join-room-btn">Rejoindre</button>
+    <div id="join-error" class="notice hidden"></div>
+  </section>
+
+  <!-- ============ MULTI LOBBY ============ -->
+  <section id="screen-multi-lobby" class="screen">
+    <h2>Salon <span class="room-code" id="lobby-code"></span></h2>
+    <p class="subtitle" id="lobby-mode-label"></p>
+    <ul class="players-list" id="lobby-players"></ul>
+    <button class="primary" id="lobby-start-btn">Lancer la partie</button>
+    <div id="lobby-waiting" class="notice">En attente que l'hôte lance la partie…</div>
+    <div>
+      <button class="ghost" id="lobby-leave-btn">Quitter le salon</button>
+    </div>
+  </section>
+
+  <!-- ============ MULTI GAME ============ -->
+  <section id="screen-multi-game" class="screen">
+    <div id="multi-status-banner"></div>
+    <div class="game-layout">
+      <div>
+        <div id="multi-gallows"></div>
+        <ul class="players-list" id="multi-players"></ul>
+      </div>
+      <div class="panel">
+        <div class="meta-row">
+          <span id="multi-turn-label"></span>
+          <span id="multi-errors-label"></span>
+        </div>
+        <div class="word-display" id="multi-word-display"></div>
+        <div class="keyboard" id="multi-keyboard"></div>
+        <div class="word-guess-row">
+          <input type="text" id="multi-word-guess-input" placeholder="Tenter le mot entier (à tout moment)..." />
+          <button id="multi-word-guess-btn">Deviner</button>
+        </div>
+        <button class="ghost" id="multi-leave-btn" style="margin-top:14px;">Quitter le salon</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script src="js/wordbank.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/hangman-svg.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/multiplayer.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
