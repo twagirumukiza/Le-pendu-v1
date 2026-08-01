@@ -16,19 +16,3 @@ const firebaseConfig = {
   appId: "1:962043042307:web:e5ea65f38c053d653f4c36"
 };
 
-const FIREBASE_CONFIGURED = firebaseConfig.apiKey !== "REMPLACE_MOI";
-
-let penduAuth = null;
-let penduDb = null;
-
-if (FIREBASE_CONFIGURED) {
-  firebase.initializeApp(firebaseConfig);
-  penduAuth = firebase.auth();
-  penduDb = firebase.database();
-}
-
-window.PenduFirebase = {
-  configured: FIREBASE_CONFIGURED,
-  auth: () => penduAuth,
-  db: () => penduDb
-};
